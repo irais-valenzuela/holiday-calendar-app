@@ -1,0 +1,48 @@
+* {
+  font-family: 'DM Serif Display';
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.el-salvador {
+  background-color: rgb(229, 178, 255);
+  width: 95px;
+  padding: 5px;
+  margin-bottom: 2px;
+  border-radius: 5px;
+}
+
+.united-states {
+  background-color: rgb(248, 172, 172);
+  width: 95px;
+  padding: 5px;
+  margin-bottom: 4px;
+  border-radius: 5px;
+}
+
+.sv {
+  background-color: rgb(229, 178, 255);
+  width: auto;
+  padding: 4px;
+}
+
+.us {
+  background-color: rgb(248, 172, 172);
+  width: auto;
+  padding: 4px;
+}
+
+.center-text {
+  text-align: center;
+  font-size: 50px;
+  color: rgb(255, 150, 150);
+}
