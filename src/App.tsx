@@ -16,33 +16,35 @@ function App() {
   const [monthIdx, setMonthIdx] = useState<number>(CURRENT_MONTH_IDX);
   const [holidays, setHolidays] = useState({});
 
-  useEffect(() => {
-    const fetchHolidays = async () => {
-      try {
-        const data1 = await fetch(
-          "https://date.nager.at/api/v3/publicholidays/2024/SV"
-        );
-        const data2 = await fetch(
-          "https://date.nager.at/api/v3/publicholidays/2024/US"
-        );
-        if (!data1.ok && !data2.ok) {
-          throw new Error("Network responses were not ok");
-        } else {
-          const sv = await data1.json();
-          const us = await data2.json();
-          const organizedHolidays = organizeCountryHolidayIntoObject(
-            sv,
-            us,
-            monthIdx
-          );
-          setHolidays(organizedHolidays);
-        }
-      } catch (error) {
-        console.error("There was a problem with the fetch operation:", error);
+  const fetchSVHolidays = () =>
+  fetch("https://date.nager.at/api/v3/publicholidays/2024/SV");
+
+const fetchUSHolidays = () =>
+  fetch("https://date.nager.at/api/v3/publicholidays/2024/US");
+
+useEffect(() => {
+  const fetchHolidays = async () => {
+    try {
+      const responses = await Promise.all([fetchSVHolidays(), fetchUSHolidays()]);
+
+      if (!responses.every((response) => response.ok)) {
+        throw new Error("One or more API calls failed");
       }
-    };
-    fetchHolidays();
-  }, [selectedMonth, monthIdx]);
+
+      const holidays = await Promise.all(responses.map((response) => response.json()));
+
+      const sv = holidays[0];
+      const us = holidays[1];
+      const organizedHolidays = organizeCountryHolidayIntoObject(sv, us, monthIdx);
+
+      setHolidays(organizedHolidays);
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
+  fetchHolidays();
+}, [selectedMonth, monthIdx]);
 
   return (
     <Container>
