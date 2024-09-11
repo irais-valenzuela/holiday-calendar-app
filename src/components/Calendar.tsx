@@ -1,14 +1,16 @@
-import Cells from './Cells'
+import Cells from "./Cells";
 interface Props {
   selectedMonth: string;
   monthIdx: number;
-  holidays: { [key: number]: string[][] };
+  svHolidays: { [key: number]: {[key: number]: string[] }};
+  usHolidays: { [key: number]: {[key: number]: string[] }};
 }
 
 const Calendar = ({
   selectedMonth,
   monthIdx,
-  holidays,
+  svHolidays,
+  usHolidays
 }: Props): JSX.Element => {
   return (
     <div>
@@ -17,10 +19,13 @@ const Calendar = ({
       <Cells
         selectedMonth={selectedMonth}
         monthIdx={monthIdx}
-        holidays={holidays}
+        svHolidays={svHolidays}
+        usHolidays={usHolidays}
       />
     </div>
   );
 };
+
+
 
 export default Calendar;

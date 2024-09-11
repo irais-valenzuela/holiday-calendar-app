@@ -4,7 +4,8 @@ import styled from "styled-components";
 interface Props {
   selectedMonth: string;
   monthIdx: number;
-  holidays: { [key: number]: string[][] };
+  svHolidays: { [key: number]: { [key: number]: string[] } };
+  usHolidays: { [key: number]: { [key: number]: string[] } };
 }
 
 const CellContainer = styled.div`
@@ -25,7 +26,12 @@ const Cell = styled.div<{ $cellType?: string }>`
       : "rgb(255, 150, 150)"};
 `;
 
-const Cells = ({ selectedMonth, monthIdx, holidays }: Props): JSX.Element => {
+const Cells = ({
+  selectedMonth,
+  monthIdx,
+  svHolidays,
+  usHolidays,
+}: Props): JSX.Element => {
   const cellCollection: JSX.Element[] = [];
 
   DAYS_OF_WEEK.forEach((day) => {
@@ -52,24 +58,25 @@ const Cells = ({ selectedMonth, monthIdx, holidays }: Props): JSX.Element => {
       cellCollection.push(
         <Cell $cellType="regular">
           {dateNumber}
-          {holidays[dateNumber] &&
-            holidays[dateNumber][0].length > 0 &&
-            holidays[dateNumber][0].map((name) => {
-              return (
-                <div className="sv" key={name}>
-                  {name}
+          <br />
+          {Object.keys(svHolidays).length &&
+          svHolidays[monthIdx + 1]?.[dateNumber]?.length
+            ? svHolidays[monthIdx + 1][dateNumber].map((holiday, index) => (
+                <div key={index} className="sv">
+                  {holiday}
                 </div>
-              );
-            })}
-          {holidays[dateNumber] &&
-            holidays[dateNumber][1].length > 0 &&
-            holidays[dateNumber][1].map((name) => {
-              return (
-                <div className="us" key={name}>
-                  {name}
-                </div>
-              );
-            })}
+              ))
+            : ""}
+          {Object.keys(usHolidays).length &&
+          usHolidays[monthIdx + 1]?.[dateNumber]?.length
+            ? usHolidays[monthIdx + 1][dateNumber].map((holiday, index) => {
+                return (
+                  <div key={index} className="us">
+                    {holiday}
+                  </div>
+                );
+              })
+            : ""}
         </Cell>
       );
       dateNumber += 1;

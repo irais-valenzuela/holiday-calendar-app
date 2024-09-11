@@ -14,37 +14,44 @@ const CURRENT_MONTH = MONTH_ARRAY[CURRENT_MONTH_IDX];
 function App() {
   const [selectedMonth, setSelectedMonth] = useState<string>(CURRENT_MONTH);
   const [monthIdx, setMonthIdx] = useState<number>(CURRENT_MONTH_IDX);
-  const [holidays, setHolidays] = useState({});
+  const [svHolidays, setSvHolidays] = useState({});
+  const [usHolidays, setUsHolidays] = useState({});
 
   const fetchSVHolidays = () =>
-  fetch("https://date.nager.at/api/v3/publicholidays/2024/SV");
+    fetch("https://date.nager.at/api/v3/publicholidays/2024/SV");
 
-const fetchUSHolidays = () =>
-  fetch("https://date.nager.at/api/v3/publicholidays/2024/US");
+  const fetchUSHolidays = () =>
+    fetch("https://date.nager.at/api/v3/publicholidays/2024/US");
 
-useEffect(() => {
-  const fetchHolidays = async () => {
-    try {
-      const responses = await Promise.all([fetchSVHolidays(), fetchUSHolidays()]);
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const responses = await Promise.all([
+          fetchSVHolidays(),
+          fetchUSHolidays(),
+        ]);
 
-      if (!responses.every((response) => response.ok)) {
-        throw new Error("One or more API calls failed");
+        if (!responses.every((response) => response.ok)) {
+          throw new Error("One or more API calls failed");
+        }
+
+        const holidays = await Promise.all(
+          responses.map((response) => response.json())
+        );
+
+        const sv = holidays[0];
+        const us = holidays[1];
+        const organizedHolidays = organizeHolidays(sv, us);
+
+        setSvHolidays(organizedHolidays[0]);
+        setUsHolidays(organizedHolidays[1]);
+      } catch (error) {
+        console.error("There was a problem with the fetch operation:", error);
       }
+    };
 
-      const holidays = await Promise.all(responses.map((response) => response.json()));
-
-      const sv = holidays[0];
-      const us = holidays[1];
-      const organizedHolidays = organizeCountryHolidayIntoObject(sv, us, monthIdx);
-
-      setHolidays(organizedHolidays);
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-    }
-  };
-
-  fetchHolidays();
-}, [selectedMonth, monthIdx]);
+    fetchHolidays();
+  }, []);
 
   return (
     <Container>
@@ -57,110 +64,70 @@ useEffect(() => {
       <Calendar
         selectedMonth={selectedMonth}
         monthIdx={monthIdx}
-        holidays={holidays}
+        svHolidays={svHolidays}
+        usHolidays={usHolidays}
       />
     </Container>
   );
 }
 
-const organizeCountryHolidayIntoObject = (
-  sv: Holiday[],
-  us: Holiday[],
-  monthIdx: number
-) => {
-  const holidayNamesByDay: { [key: number]: string[][] } = {
-    1: [[], []],
-    2: [[], []],
-    3: [[], []],
-    4: [[], []],
-    5: [[], []],
-    6: [[], []],
-    7: [[], []],
-    8: [[], []],
-    9: [[], []],
-    10: [[], []],
-    11: [[], []],
-    12: [[], []],
-    13: [[], []],
-    14: [[], []],
-    15: [[], []],
-    16: [[], []],
-    17: [[], []],
-    18: [[], []],
-    19: [[], []],
-    20: [[], []],
-    21: [[], []],
-    22: [[], []],
-    23: [[], []],
-    24: [[], []],
-    25: [[], []],
-    26: [[], []],
-    27: [[], []],
-    28: [[], []],
-    29: [[], []],
-    30: [[], []],
-    31: [[], []],
-  };
+/*
+ organizeHolidays organizes the api holiday results  into 2 seperate objects. Each object stores the holiday months in which there are holidays as a number key
+ and value for that month is another object that holds keys corresponding to days in which there are holidays the day keys
+ then store strings representing the localName of the holiday in an array. These 2 objects are then stored in an array and returned. 
+ */
+const organizeHolidays = (sv: Holiday[], us: Holiday[]) => {
+  const svHolidays: { [key: number]: { [key: number]: string[] } } = {};
 
   sv.forEach((holiday) => {
-    const holidayDateArr = holiday.date.split("-");
-    if (holidayDateArr[1][0] === "0") {
-      if (parseInt(holidayDateArr[1][1]) === monthIdx + 1) {
-        if (holidayDateArr[2][0] === "0") {
-          holidayNamesByDay[parseInt(holidayDateArr[2][1])][0].push(
-            holiday.localName
-          );
-        } else {
-          holidayNamesByDay[parseInt(holidayDateArr[2])][0].push(
-            holiday.localName
-          );
-        }
+    const monthPart1 = holiday.date[5];
+    const monthPart2 = holiday.date[6];
+    const dayPart1 = holiday.date[8];
+    const dayPart2 = holiday.date[9];
+
+    const month = parseInt(monthPart1 + monthPart2);
+    const day = parseInt(dayPart1 + dayPart2);
+
+    if (svHolidays.hasOwnProperty(month)) {
+      if (!svHolidays[month].hasOwnProperty(day)) {
+        svHolidays[month][day] = [];
       }
+      svHolidays[month][day].push(holiday.localName);
     } else {
-      if (parseInt(holidayDateArr[1]) === monthIdx + 1) {
-        if (holidayDateArr[2][0] === "0") {
-          holidayNamesByDay[parseInt(holidayDateArr[2][1])][0].push(
-            holiday.localName
-          );
-        } else {
-          holidayNamesByDay[parseInt(holidayDateArr[2])][0].push(
-            holiday.localName
-          );
-        }
+      svHolidays[month] = {};
+      if (!svHolidays[month].hasOwnProperty(day)) {
+        svHolidays[month][day] = [];
       }
+      svHolidays[month][day].push(holiday.localName);
     }
   });
+
+  const usHolidays: { [key: number]: { [key: number]: string[] } } = {};
 
   us.forEach((holiday) => {
-    let holidayDateArr = holiday.date.split("-");
-    if (holidayDateArr[1][0] === "0") {
-      if (parseInt(holidayDateArr[1][1]) === monthIdx + 1) {
-        if (holidayDateArr[2][0] === "0") {
-          holidayNamesByDay[parseInt(holidayDateArr[2][1])][1].push(
-            holiday.localName
-          );
-        } else {
-          holidayNamesByDay[parseInt(holidayDateArr[2])][1].push(
-            holiday.localName
-          );
-        }
+    const monthPart1 = holiday.date[5];
+    const monthPart2 = holiday.date[6];
+    const dayPart1 = holiday.date[8];
+    const dayPart2 = holiday.date[9];
+
+    const month = parseInt(monthPart1 + monthPart2);
+    const day = parseInt(dayPart1 + dayPart2);
+
+    if (usHolidays.hasOwnProperty(month)) {
+      if (!usHolidays[month].hasOwnProperty(day)) {
+        usHolidays[month][day] = [];
       }
+      usHolidays[month][day].push(holiday.localName);
     } else {
-      if (parseInt(holidayDateArr[1]) === monthIdx + 1) {
-        if (holidayDateArr[2][0] === "0") {
-          holidayNamesByDay[parseInt(holidayDateArr[2][1])][1].push(
-            holiday.localName
-          );
-        } else {
-          holidayNamesByDay[parseInt(holidayDateArr[2])][1].push(
-            holiday.localName
-          );
-        }
+      usHolidays[month] = {};
+      if (!usHolidays[month].hasOwnProperty(day)) {
+        usHolidays[month][day] = [];
       }
+      usHolidays[month][day].push(holiday.localName);
     }
   });
 
-  return holidayNamesByDay;
+  return [svHolidays, usHolidays];
 };
 
 export default App;
