@@ -1,7 +1,7 @@
 import { DAYS_OF_WEEK, DAYS_IN_MONTH } from "../constants";
 import styled from "styled-components";
 
-interface Props {
+interface CellsProps {
   selectedMonth: string;
   monthIdx: number;
   svHolidays: { [key: number]: { [key: number]: string[] } };
@@ -37,7 +37,7 @@ const Cells = ({
   svHolidays,
   usHolidays,
   setShowModal
-}: Props): JSX.Element => {
+}: CellsProps): JSX.Element => {
   const cellCollection: JSX.Element[] = [];
 
   DAYS_OF_WEEK.forEach((day) => {

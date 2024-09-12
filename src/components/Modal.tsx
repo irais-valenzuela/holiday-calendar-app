@@ -2,12 +2,12 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-interface Props {
+interface CustomHolidayProps {
   showModal: boolean;
   setShowModal: (value: boolean) => void
 }
 
-const CustomHolidayModal = ({showModal, setShowModal}: Props) => {
+const CustomHolidayModal = ({showModal, setShowModal}: CustomHolidayProps) => {
 
   const handleClose = () => {
     setShowModal(false);

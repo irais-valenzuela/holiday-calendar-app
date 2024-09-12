@@ -1,5 +1,5 @@
 import Cells from "./Cells";
-interface Props {
+interface CalendarProps {
   selectedMonth: string;
   monthIdx: number;
   svHolidays: { [key: number]: {[key: number]: string[] }};
@@ -13,7 +13,7 @@ const Calendar = ({
   svHolidays,
   usHolidays,
   setShowModal,
-}: Props): JSX.Element => {
+}: CalendarProps): JSX.Element => {
   return (
     <div>
       <div className="el-salvador">El Salvador</div>

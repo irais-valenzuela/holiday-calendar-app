@@ -15,8 +15,8 @@ const CURRENT_MONTH = MONTH_ARRAY[CURRENT_MONTH_IDX];
 function App() {
   const [selectedMonth, setSelectedMonth] = useState<string>(CURRENT_MONTH);
   const [monthIdx, setMonthIdx] = useState<number>(CURRENT_MONTH_IDX);
-  const [svHolidays, setSvHolidays] = useState({});
-  const [usHolidays, setUsHolidays] = useState({});
+  const [svHolidays, setSvHolidays] = useState<{ [key: number]: { [key: number]: string[] } }>({});
+  const [usHolidays, setUsHolidays] = useState<{ [key: number]: { [key: number]: string[] } }>({});
   const [showModal, setShowModal] = useState<boolean>(false)
 
 

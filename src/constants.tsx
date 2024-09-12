@@ -12,11 +12,6 @@ export interface Holiday {
   types: string[];
 }
 
-export interface HolidayState {
-  sv: Holiday[];
-  us: Holiday[];
-}
-
 export const DAYS_OF_WEEK = [
   "Sunday",
   "Monday",
