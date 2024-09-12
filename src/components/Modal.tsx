@@ -17,9 +17,12 @@ const CustomHolidayModal = ({showModal, setShowModal}: Props) => {
     <>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Add your holiday</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+        <Modal.Body>Please Provide the Name of the holiday and date</Modal.Body>
+        <input type='text' placeholder='Holiday Name'></input>
+        <input type='date' />
+
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
