@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { MonthDropdown, Calendar } from "./components";
+import CustomHolidayModal from './components/Modal';
 import { MONTH_ARRAY, Holiday } from "./constants";
 
 const Container = styled.div`
@@ -16,6 +17,8 @@ function App() {
   const [monthIdx, setMonthIdx] = useState<number>(CURRENT_MONTH_IDX);
   const [svHolidays, setSvHolidays] = useState({});
   const [usHolidays, setUsHolidays] = useState({});
+  const [showModal, setShowModal] = useState<boolean>(false)
+
 
   const fetchSVHolidays = () =>
     fetch("https://date.nager.at/api/v3/publicholidays/2024/SV");
@@ -61,11 +64,13 @@ function App() {
         selectedMonth={selectedMonth}
         setSelectedMonth={setSelectedMonth}
       />
+      <CustomHolidayModal showModal={showModal} setShowModal={setShowModal}/>
       <Calendar
         selectedMonth={selectedMonth}
         monthIdx={monthIdx}
         svHolidays={svHolidays}
         usHolidays={usHolidays}
+        setShowModal={setShowModal}
       />
     </Container>
   );

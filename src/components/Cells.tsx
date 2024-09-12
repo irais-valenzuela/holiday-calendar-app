@@ -6,12 +6,13 @@ interface Props {
   monthIdx: number;
   svHolidays: { [key: number]: { [key: number]: string[] } };
   usHolidays: { [key: number]: { [key: number]: string[] } };
+  setShowModal: (value: boolean) => void;
 }
 
 const CellContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 200px);
-  grid-template-rows: 40px 150px 150px 150px 150px 150px 150px;
+  grid-template-rows: 40px repeat(6, 150px);
 `;
 
 const Cell = styled.div<{ $cellType?: string }>`
@@ -26,11 +27,16 @@ const Cell = styled.div<{ $cellType?: string }>`
       : "rgb(255, 150, 150)"};
 `;
 
+const handleClick = ( setShowModal: (value: boolean) => void) => {
+  setShowModal(true)
+}
+
 const Cells = ({
   selectedMonth,
   monthIdx,
   svHolidays,
   usHolidays,
+  setShowModal
 }: Props): JSX.Element => {
   const cellCollection: JSX.Element[] = [];
 
@@ -56,7 +62,8 @@ const Cells = ({
       }
     } else if (i >= startDate) {
       cellCollection.push(
-        <Cell $cellType="regular">
+ 
+        <Cell $cellType="regular" onClick={() => handleClick(setShowModal)}>
           {dateNumber}
           <br />
           {Object.keys(svHolidays).length &&
@@ -80,6 +87,7 @@ const Cells = ({
         </Cell>
       );
       dateNumber += 1;
+
     }
   }
   return <CellContainer>{cellCollection}</CellContainer>;

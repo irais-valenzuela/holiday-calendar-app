@@ -4,13 +4,15 @@ interface Props {
   monthIdx: number;
   svHolidays: { [key: number]: {[key: number]: string[] }};
   usHolidays: { [key: number]: {[key: number]: string[] }};
+  setShowModal: (value: boolean) => void;
 }
 
 const Calendar = ({
   selectedMonth,
   monthIdx,
   svHolidays,
-  usHolidays
+  usHolidays,
+  setShowModal,
 }: Props): JSX.Element => {
   return (
     <div>
@@ -21,6 +23,7 @@ const Calendar = ({
         monthIdx={monthIdx}
         svHolidays={svHolidays}
         usHolidays={usHolidays}
+        setShowModal={setShowModal}
       />
     </div>
   );
