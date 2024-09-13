@@ -12,6 +12,11 @@ export interface Holiday {
   types: string[];
 }
 
+export interface CustomHoliday {
+  name: string;
+  date: string;
+}
+
 export const DAYS_OF_WEEK = [
   "Sunday",
   "Monday",

@@ -1,37 +1,38 @@
-import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { CustomHoliday } from "../constants";
+import { organizeCustomHolidays } from "../helperFunctions";
 
 interface CustomHolidayProps {
   showModal: boolean;
   setShowModal: (value: boolean) => void;
-}
-interface CustomHoliday {
-  name: string;
-  date: string;
+  setModalData: (value: CustomHoliday) => void;
+  modalData: CustomHoliday;
+  setCustomHolidays: (value: {
+    [key: number]: { [key: number]: string[] };
+  }) => void;
 }
 const CustomHolidayModal = ({
   showModal,
   setShowModal,
+  setModalData,
+  modalData,
+  setCustomHolidays,
 }: CustomHolidayProps) => {
-  const [customHolidayData, setCustomHolidayData] = useState<CustomHoliday>({
-    name: "",
-    date: "",
-  });
-
   const handleClose = (e: React.FormEvent) => {
     e.preventDefault();
     setShowModal(false);
-    setCustomHolidayData({
+    setModalData({
       name: "",
       date: "",
     });
+    organizeCustomHolidays(modalData, setCustomHolidays);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCustomHolidayData({
-      ...customHolidayData,
+    setModalData({
+      ...modalData,
       [name]: value,
     });
   };
@@ -47,14 +48,14 @@ const CustomHolidayModal = ({
           <input
             type="text"
             placeholder="Holiday Name"
-            value={customHolidayData.name}
+            value={modalData.name}
             name="name"
             onChange={handleChange}
           ></input>
           <input
             type="date"
             name="date"
-            value={customHolidayData.date}
+            value={modalData.date}
             onChange={handleChange}
           />
           <Modal.Footer>
